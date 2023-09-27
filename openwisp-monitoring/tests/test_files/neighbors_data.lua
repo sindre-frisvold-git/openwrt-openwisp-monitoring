@@ -6,6 +6,12 @@ test_data.sample_parse_arp = {
   {interface = "eth2", ip = "192.168.0.1", mac = "bc:0f:9a:17:5a:5c", state = ""}
 }
 
+test_data.sample_parse_brctl = {
+  {port = "3", mac = "0a:20:02:08:20:07", is_local = false},
+  {port = "1", mac = "12:23:1c:32:1c:1c", is_local = false},
+  {port = "3", mac = "72:aa:7f:5a:2a:4b", is_local = true},
+}
+
 test_data.sample_ip_neigh = {
   {
     interface = "eth1",

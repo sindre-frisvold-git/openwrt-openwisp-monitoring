@@ -1,0 +1,4 @@
+port no	mac addr		is local?	ageing timer
+3	0a:20:02:08:20:07	no		  13.11
+1	12:23:1c:32:1c:1c	no		  92.34
+3	72:aa:7f:5a:2a:4b	yes		   0.00

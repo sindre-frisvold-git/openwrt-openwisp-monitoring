@@ -34,6 +34,12 @@ function TestNeighbor.testArpTable()
   luaunit.assertEquals(neighbor.get_neighbors(), neighbor_data.sample_ip_neigh)
 end
 
+function TestNeighbor.testPortNeighborTable()
+  local neighbor = require('neighbors')
+
+  luaunit.assertEquals(neighbor.parse_brctl(), neighbor_data.sample_parse_brctl)
+end
+
 function TestNetJSON.test_neighbors()
   local test_file_dir = './test_files/'
   package.loaded.io = {
@@ -60,6 +66,30 @@ function TestNetJSON.test_neighbors()
   luaunit.assertEquals(netjson['neighbors'][3]["mac"], "bc:0f:9a:17:5a:5c")
   luaunit.assertNotNil(netjson['neighbors'][3]["ip"], "fe80::bfca:28ed:f368:6cbc")
   luaunit.assertEquals(netjson['neighbors'][1]["interface"], "eth1")
+end
+
+function TestNetJSON.test_port_neighbors()
+  local test_file_dir = './test_files/'
+  package.loaded.io = {
+    popen = function(arg)
+      local f = assert(io.tmpfile())
+      if arg == 'brctl showmacs br-lan 2> /dev/null' then
+      return io.open(test_file_dir .. 'brctl.txt')
+      else
+        f:write('')
+      end
+      f:seek('set', 0)
+      return f
+    end,
+    open = function(arg) return nil end,
+    write = function(...) return nil end
+  }
+  local netjson_string = require('netjson-monitoring')
+  local netjson = cjson.decode(netjson_string)
+  luaunit.assertNotNil(test_file_dir .. 'ip_neigh.txt')
+  luaunit.assertEquals(netjson['neighbors'][1]["port"], "3")
+  luaunit.assertNotNil(netjson['neighbors'][2]["mac"], "12:23:1c:32:1c:1c")
+  luaunit.assertEquals(netjson['neighbors'][3]["is_local"], "true")
 end
 
 os.exit(luaunit.LuaUnit.run())

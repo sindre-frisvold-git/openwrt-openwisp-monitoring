@@ -45,6 +45,8 @@ env.io = {
       return io.open(test_file_dir .. 'ip_json_neigh.txt')
     elseif arg == 'ip neigh 2> /dev/null' then
       return io.open(test_file_dir .. 'ip_neigh.txt')
+    elseif arg == 'brctl showmacs br-lan 2> /dev/null' then
+      return io.open(test_file_dir .. 'brctl.txt')
     else
       local modem =
         '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1'

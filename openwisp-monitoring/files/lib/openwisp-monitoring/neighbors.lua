@@ -21,6 +21,24 @@ function neighbors.parse_arp()
   return arp_info
 end
 
+function neighbors.parse_brctl()
+  local brctl_info = {}
+  local command = io.popen("brctl showmacs br-lan 2> /dev/null")
+  if (command == nil) then
+    return brctl_info
+  end
+  
+  local brctl_data = command:read("*a")
+  for _, line in ipairs(utils.split(brctl_data, "\n")) do
+    if line:sub(1, 7) ~= 'port no' then
+      local port, mac, is_local = line:match(
+        "(%S+)%s+(%S+)%s+(%S+)")
+      table.insert(brctl_info, {port = port, mac = mac, is_local = (is_local == "yes")})
+    end
+  end
+  return brctl_info
+end
+
 function neighbors.get_ip_neigh_json()
   local arp_info = {}
   local output_file = io.popen('ip -json neigh 2> /dev/null')
@@ -60,6 +78,11 @@ function neighbors.get_neighbors()
   if next(arp_table) == nil then arp_table = neighbors.get_ip_neigh() end
   if next(arp_table) == nil then arp_table = neighbors.parse_arp() end
   return arp_table
+end
+
+function neighbors.get_port_neighbors()
+  local brlan_table = neighbors.parse_brctl()
+  return brlan_table
 end
 
 return neighbors
